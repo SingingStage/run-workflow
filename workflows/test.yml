@@ -1,0 +1,24 @@
+name: Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  update-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Run workflow using custom action
+        uses: ./.github/actions/run-workflow
+        with:
+          token: ${{ secrets.SINGING_STAGE_WORKFLOW_TOKEN }}
+          repository: SingingStage/environments
+          workflow: update-integration.yml
+          ref: main
+          inputs: |
+            {
+              "allow_major_change": false,
+              "singing-stage-commit": "${{ github.sha }}"
+            }

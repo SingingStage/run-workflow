@@ -1,0 +1,21 @@
+name: Trigger Workflow
+description: Custom action to trigger a workflow dispatch in another repository
+inputs:
+  token:
+    description: GitHub token with `workflow` scope
+    required: true
+  repository:
+    description: Repository to trigger the workflow in (e.g., owner/repo)
+    required: true
+  workflow:
+    description: Workflow file name to trigger
+    required: true
+  ref:
+    description: Git reference (branch/tag) to trigger the workflow on
+    required: true
+  inputs:
+    description: JSON string of inputs for the workflow
+    required: false
+runs:
+  using: "node20"
+  main: "dist/index.js"
