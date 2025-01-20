@@ -11,7 +11,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run workflow using custom action
-        uses: ./.github/actions/run-workflow
+        uses: ./
         with:
           token: ${{ secrets.SINGING_STAGE_WORKFLOW_TOKEN }}
           repository: SingingStage/environments
@@ -20,5 +20,5 @@ jobs:
           inputs: |
             {
               "allow_major_change": false,
-              "singing-stage-commit": "${{ github.sha }}"
+              "singing-stage-commit": "acae20097b5893888028f6b95897712049b79e34"
             }
