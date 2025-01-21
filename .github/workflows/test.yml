@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  update-integration:
+  run-workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,6 +22,6 @@ jobs:
           workflow: dispatched-workflow.yml
           ref: main
           inputs: |
-            {
-              "uuid": "${{ github.sha }}"
-            }
+            ${{ toJSON({
+              "uuid": github.sha
+            }) }}
