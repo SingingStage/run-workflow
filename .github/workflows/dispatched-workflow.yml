@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs
-        run: echo ${{toJson(inputs)}}
+        run: 'echo "Inputs: ${{toJson(inputs)}}"'
         shell: bash
