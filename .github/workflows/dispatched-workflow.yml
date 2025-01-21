@@ -12,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs
-        run: 'echo "Inputs: ${{toJson(inputs)}}"'
-        shell: bash
+        uses: SingingStage/identify-workflow
 
       - name: Wait
         run: sleep 20
