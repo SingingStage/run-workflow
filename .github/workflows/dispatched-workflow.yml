@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
         uuid:
-        type: string
-        description: "UUID to identify workflow run"
-        required: true
+          type: string
+          description: "UUID to identify workflow run"
+          required: true
 
 jobs:
   test-dispatch:
