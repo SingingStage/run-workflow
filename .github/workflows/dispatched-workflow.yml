@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs
-        uses: SingingStage/identify-workflow
+        uses: SingingStage/identify-workflow@main
 
       - name: Wait
         run: sleep 20
