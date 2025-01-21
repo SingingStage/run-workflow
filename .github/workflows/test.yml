@@ -23,6 +23,5 @@ jobs:
           ref: main
           inputs: |
             {
-              "allow_major_change": false,
               "uuid": "${{ github.sha }}"
             }

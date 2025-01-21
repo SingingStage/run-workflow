@@ -2,10 +2,6 @@ name: Dispatched Workflow
 on:
   workflow_dispatch:
     inputs:
-      allow_major_change:
-        description: "Allow major changes"
-        required: true
-        default: false
         uuid:
         description: "UUID to identify workflow run"
         required: true
