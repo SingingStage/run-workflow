@@ -22,6 +22,6 @@ jobs:
           workflow: dispatched-workflow.yml
           ref: main
           inputs: |
-            ${{ toJSON({
-              "uuid": github.sha
-            }) }}
+            {
+              "uuid": "123"
+            }
