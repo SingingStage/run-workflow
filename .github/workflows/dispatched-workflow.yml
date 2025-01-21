@@ -14,3 +14,9 @@ jobs:
       - name: Print outputs
         run: 'echo "Inputs: ${{toJson(inputs)}}"'
         shell: bash
+
+      - name: Wait
+        run: sleep 20
+
+      - name: Succeed
+        run: exit 0
