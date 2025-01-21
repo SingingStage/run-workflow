@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Print Full Repository Path
+        run: echo "Repository: ${{ github.repository }}"
       - name: Run workflow using custom action
         uses: ./
         with:
