@@ -18,8 +18,8 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.SINGING_STAGE_WORKFLOW_TOKEN }}
-          repository: SingingStage/environments
-          workflow: update-integration.yml
+          repository: ${{ github.repository }}
+          workflow: dispatched-workflow.yml
           ref: main
           inputs: |
             {

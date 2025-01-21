@@ -1,0 +1,23 @@
+name: Dispatched Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      allow_major_change:
+        description: "Allow major changes"
+        required: true
+        default: false
+      singing_stage_commit:
+        description: "Commit hash to process"
+        required: true
+
+jobs:
+  test-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Inputs
+        run: |
+          echo "Allow Major Change: ${{ github.event.inputs.allow_major_change }}"
+          echo "Singing Stage Commit: ${{ github.event.inputs.singing_stage_commit }}"
+
+      - name: Debug GitHub Context
+        run: echo "${{ toJson(github) }}"
