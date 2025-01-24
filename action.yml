@@ -20,7 +20,7 @@ inputs:
   startTime:
     description: 'The number of seconds to wait before starting the polling.'
     required: false
-    default: '1'
+    default: '5'
   interval:
     description: 'Polling interval in seconds. Default is 1 seconds.'
     required: false
