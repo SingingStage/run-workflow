@@ -1,21 +1,40 @@
-name: Trigger Workflow
-description: Custom action to trigger a workflow dispatch in another repository
+name: 'Workflow Dispatcher with Polling'
+description: 'Dispatch a GitHub workflow and poll for its completion status.'
+
 inputs:
   token:
-    description: GitHub token with `workflow` scope
+    description: 'GitHub token with repository permissions.'
     required: true
   repository:
-    description: Repository to trigger the workflow in (e.g., owner/repo)
+    description: 'The repository in the format "owner/repo".'
     required: true
   workflow:
-    description: Workflow file name to trigger
+    description: 'The workflow file name to dispatch (e.g., "my-workflow.yml").'
     required: true
   ref:
-    description: Git reference (branch/tag) to trigger the workflow on
+    description: 'The branch or tag to run the workflow on.'
     required: true
   inputs:
-    description: JSON string of inputs for the workflow
+    description: 'Optional JSON string of inputs to pass to the workflow.'
     required: false
+  startTime:
+    description: 'The start time for monitoring workflow runs (ISO 8601 format). Defaults to the current time.'
+    required: false
+    default: ''
+  interval:
+    description: 'Polling interval in milliseconds. Default is 5000ms (5 seconds).'
+    required: false
+    default: '5000'
+  timeout:
+    description: 'Timeout for polling in milliseconds. Default is 300000ms (5 minutes).'
+    required: false
+    default: '300000'
+
 runs:
-  using: "node20"
-  main: "dist/index.js"
+  using: 'node20'
+  main: 'dist/index.js'
+
+author: 'ophirharamaty@gmail.com'
+branding:
+  icon: 'zap'
+  color: 'blue'
