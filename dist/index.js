@@ -31754,18 +31754,24 @@ async function checkLogsForParameters(logsUrl, inputs, octokit) {
     const logsResponse = await octokit.request(`GET ${logsUrl}`);
     const logsContent = logsResponse.data;
 
+    // Ensure logsContent is a string
+    const logsString = typeof logsContent === 'string' ? logsContent : JSON.stringify(logsContent);
+
     // Check if logs contain the specified inputs
     for (const [key, value] of Object.entries(inputs)) {
-      if (!logsContent.includes(`${key}: ${value}`)) {
+      if (!logsString.includes(`${key}: ${value}`)) {
         return false;
       }
     }
     return true;
   } catch (error) {
     core.error(`Error fetching or parsing logs: ${error.message}`);
+    core.setFailed(`Failed to fetch logs: ${error.message}`);
+
     return false;
   }
 }
+
 
 run();
 
