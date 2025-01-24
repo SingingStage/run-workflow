@@ -18,6 +18,7 @@ jobs:
           repository: ${{ github.repository }}
           workflow: dispatched-workflow.yml
           ref: main
+          
           inputs: |
             {
               "uuid": "123"

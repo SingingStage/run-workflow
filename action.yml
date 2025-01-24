@@ -18,17 +18,17 @@ inputs:
     description: 'Optional JSON string of inputs to pass to the workflow.'
     required: false
   startTime:
-    description: 'The start time for monitoring workflow runs (ISO 8601 format). Defaults to the current time.'
+    description: 'The number of seconds to wait before starting the polling.'
     required: false
-    default: ''
+    default: '0'
   interval:
-    description: 'Polling interval in milliseconds. Default is 5000ms (5 seconds).'
+    description: 'Polling interval in seconds. Default is 5 seconds.'
     required: false
-    default: '5000'
+    default: '5'
   timeout:
-    description: 'Timeout for polling in milliseconds. Default is 300000ms (5 minutes).'
+    description: 'Timeout for polling in seconds. Default is 300 seconds (5 minutes).'
     required: false
-    default: '300000'
+    default: '300'
 
 runs:
   using: 'node20'

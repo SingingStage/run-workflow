@@ -14,7 +14,7 @@ async function checkLogsForParameters(logsUrl, inputs, interval, token) {
     if (!logsResponse.ok) {
       if (logsResponse.status === 404) {
         core.warning('Logs are not yet available. Retrying...');
-        await new Promise((resolve) => setTimeout(resolve, interval)); // Wait for the specified interval
+        await new Promise((resolve) => setTimeout(resolve, interval * 1000)); // Wait for the specified interval
         return false;
       } else {
         throw new Error(`Failed to fetch logs: ${logsResponse.statusText}`);
@@ -47,9 +47,9 @@ async function run() {
     const workflow = core.getInput('workflow', { required: true });
     const ref = core.getInput('ref', { required: true });
     const inputs = core.getInput('inputs');
-    const startTime = new Date(core.getInput('startTime') || new Date().toISOString());
-    const interval = parseInt(core.getInput('interval') || 5000, 10); // Default: 5 seconds
-    const timeout = parseInt(core.getInput('timeout') || 300000, 10); // Default: 5 minutes
+    const startTime = parseInt(core.getInput('startTime') || '0', 10); // Wait before starting in seconds
+    const interval = parseInt(core.getInput('interval') || '5', 10); // Polling interval in seconds
+    const timeout = parseInt(core.getInput('timeout') || '300', 10); // Timeout in seconds
 
     const [owner, repo] = repository.split('/');
     const octokit = new Octokit({ auth: token });
@@ -71,17 +71,15 @@ async function run() {
 
     core.info(`Successfully triggered workflow ${workflow}`);
 
-    // Delay polling until `startTime`
-    const now = new Date();
-    if (now < startTime) {
-      const delay = startTime - now;
-      core.info(`Waiting ${delay / 1000} seconds until start time...`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+    // Delay polling until `startTime` seconds have passed
+    if (startTime > 0) {
+      core.info(`Waiting ${startTime} seconds before starting polling...`);
+      await new Promise((resolve) => setTimeout(resolve, startTime * 1000));
     }
 
     // Poll for logs
-    const endTime = new Date(startTime.getTime() + timeout);
-    while (new Date() < endTime) {
+    const endTime = Date.now() + timeout * 1000;
+    while (Date.now() < endTime) {
       core.info('Checking workflow status...');
       const runs = await octokit.actions.listWorkflowRuns({
         owner,
@@ -91,7 +89,7 @@ async function run() {
       });
 
       const relevantRun = runs.data.workflow_runs.find((run) => {
-        return run.head_branch === ref && new Date(run.created_at) >= startTime;
+        return run.head_branch === ref && Date.parse(run.created_at) >= Date.now() - timeout * 1000;
       });
 
       if (relevantRun) {
@@ -118,7 +116,7 @@ async function run() {
       }
 
       // Wait for the specified interval before polling again
-      await new Promise((resolve) => setTimeout(resolve, interval));
+      await new Promise((resolve) => setTimeout(resolve, interval * 1000));
     }
 
     core.setFailed('Timeout exceeded while waiting for the workflow to complete.');
