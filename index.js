@@ -124,6 +124,8 @@ async function checkLogsForParameters(logsUrl, inputs, octokit) {
     return true;
   } catch (error) {
     core.error(`Error fetching or parsing logs: ${error.message}`);
+    core.setFailed(`Failed to fetch logs: ${error.message}`);
+
     return false;
   }
 }
