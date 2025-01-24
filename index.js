@@ -112,9 +112,12 @@ async function checkLogsForParameters(logsUrl, inputs, octokit) {
     const logsResponse = await octokit.request(`GET ${logsUrl}`);
     const logsContent = logsResponse.data;
 
+    // Ensure logsContent is a string
+    const logsString = typeof logsContent === 'string' ? logsContent : JSON.stringify(logsContent);
+
     // Check if logs contain the specified inputs
     for (const [key, value] of Object.entries(inputs)) {
-      if (!logsContent.includes(`${key}: ${value}`)) {
+      if (!logsString.includes(`${key}: ${value}`)) {
         return false;
       }
     }
@@ -124,5 +127,6 @@ async function checkLogsForParameters(logsUrl, inputs, octokit) {
     return false;
   }
 }
+
 
 run();
