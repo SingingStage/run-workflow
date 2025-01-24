@@ -1,9 +1,13 @@
+const core = require('@actions/core'); // Ensure core is imported
+const { Octokit } = require('@octokit/rest');
+const fetch = require('node-fetch');
+
 async function checkLogsForParameters(logsUrl, inputs, octokit, interval) {
   try {
     const logsResponse = await octokit.request(`GET ${logsUrl}`);
     const logsContent = logsResponse.data;
 
-    // Ensure logsContent is a string
+    // Ensure logsContent is converted to a string
     const logsString = typeof logsContent === 'string' ? logsContent : JSON.stringify(logsContent);
 
     // Check if logs contain the specified inputs
