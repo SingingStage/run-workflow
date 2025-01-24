@@ -1,11 +1,14 @@
 const core = require('@actions/core');
 const { Octokit } = require('@octokit/rest');
 
-async function checkLogsForParameters(logsUrl, inputs, interval) {
+async function checkLogsForParameters(logsUrl, inputs, interval, token) {
   try {
     const logsResponse = await fetch(logsUrl, {
       method: 'GET',
-      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `Bearer ${token}`, // Include token for authentication
+      },
     });
 
     if (!logsResponse.ok) {
@@ -34,6 +37,7 @@ async function checkLogsForParameters(logsUrl, inputs, interval) {
     throw error;
   }
 }
+
 
 async function run() {
   try {
@@ -106,7 +110,7 @@ async function run() {
 
         // Check logs for inputs
         if (logs_url) {
-          const logsReady = await checkLogsForParameters(logs_url, payload.inputs, interval);
+          const logsReady = await checkLogsForParameters(logs_url, payload.inputs, interval, token);
           if (logsReady) {
             core.info('Logs contain the expected parameters.');
           }
