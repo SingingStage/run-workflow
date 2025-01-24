@@ -29726,14 +29726,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 464:
-/***/ ((module) => {
-
-module.exports = eval("require")("node-fetch");
-
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
@@ -31648,36 +31640,40 @@ module.exports = parseParams
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const core = __nccwpck_require__(2186); // Ensure core is imported
+const core = __nccwpck_require__(2186);
 const { Octokit } = __nccwpck_require__(5375);
-const fetch = __nccwpck_require__(464);
 
-async function checkLogsForParameters(logsUrl, inputs, octokit, interval) {
+async function checkLogsForParameters(logsUrl, inputs, interval) {
   try {
-    const logsResponse = await octokit.request(`GET ${logsUrl}`);
-    const logsContent = logsResponse.data;
+    const logsResponse = await fetch(logsUrl, {
+      method: 'GET',
+      headers: { 'Accept': 'application/vnd.github.v3+json' },
+    });
 
-    // Ensure logsContent is converted to a string
-    const logsString = typeof logsContent === 'string' ? logsContent : JSON.stringify(logsContent);
+    if (!logsResponse.ok) {
+      if (logsResponse.status === 404) {
+        core.warning('Logs are not yet available. Retrying...');
+        await new Promise((resolve) => setTimeout(resolve, interval)); // Wait for the specified interval
+        return false;
+      } else {
+        throw new Error(`Failed to fetch logs: ${logsResponse.statusText}`);
+      }
+    }
+
+    const logsContent = await logsResponse.text(); // Fetch logs as text
 
     // Check if logs contain the specified inputs
     for (const [key, value] of Object.entries(inputs)) {
-      if (!logsString.includes(`${key}: ${value}`)) {
+      if (!logsContent.includes(`${key}: ${value}`)) {
         core.warning(`Input ${key}: ${value} not found in logs.`);
         return false;
       }
     }
     return true;
   } catch (error) {
-    if (error.status === 404) {
-      core.warning('Logs are not yet available. Retrying...');
-      await new Promise((resolve) => setTimeout(resolve, interval)); // Wait for the specified interval
-      return false;
-    } else {
-      core.error(`Critical error fetching logs: ${error.message}`);
-      core.setFailed(`Error fetching logs: ${error.message}`);
-      throw error;
-    }
+    core.error(`Critical error fetching logs: ${error.message}`);
+    core.setFailed(`Error fetching logs: ${error.message}`);
+    throw error;
   }
 }
 
@@ -31752,7 +31748,7 @@ async function run() {
 
         // Check logs for inputs
         if (logs_url) {
-          const logsReady = await checkLogsForParameters(logs_url, payload.inputs, octokit, interval);
+          const logsReady = await checkLogsForParameters(logs_url, payload.inputs, interval);
           if (logsReady) {
             core.info('Logs contain the expected parameters.');
           }
