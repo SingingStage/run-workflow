@@ -17,5 +17,5 @@ jobs:
       - name: Wait
         run: sleep 10
 
-      - name: Failure
-        run: exit 1
+      - name: Succeed
+        run: exit 0
