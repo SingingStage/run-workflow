@@ -44,22 +44,28 @@ jobs:
               "uuid": "${{ github.sha }}-2"
             }
   validate-workflow-status:
-    runs-on: ubuntu-latest
-    needs:
-      - run-slow-succeeding-workflow
-      - run-fast-failing-workflow
-    if: always()  # Ensures this job runs even if dependencies fail
-    steps:
-      - name: Check Workflow Status from Job Results
-        shell: bash
-        run: |
-          echo "Succeeding workflow result: ${{ needs.run-slow-succeeding-workflow.result }}"
-          echo "Failing workflow conclusion: ${{ needs.run-fast-failing-workflow.conclusion }}"
+  runs-on: ubuntu-latest
+  needs:
+    - run-slow-succeeding-workflow
+    - run-fast-failing-workflow
+  if: always()  # Ensures this job runs even if dependencies fail
+  steps:
+    - name: Check Workflow Status from Job Results
+      shell: bash
+      run: |
+        SUCCEEDING_RESULT="${{ needs.run-slow-succeeding-workflow.result }}"
+        FAILING_RESULT="${{ needs.run-fast-failing-workflow.result }}"
 
-          if [[ "${{ needs.run-slow-succeeding-workflow.result }}" == "success" && "${{ needs.run-fast-failing-workflow.conclusion }}" == "failure" ]]; then
-            echo "✅ Conditions met: Succeeding job succeeded, failing job failed."
-            exit 0  # Mark workflow as successful
-          else
-            echo "❌ Conditions NOT met. Marking workflow as failed."
-            exit 1  # Explicitly fail the workflow
-          fi
+        echo "Succeeding workflow result: $SUCCEEDING_RESULT"
+        echo "Failing workflow result: $FAILING_RESULT"
+
+        if [[ "$SUCCEEDING_RESULT" == "success" && "$FAILING_RESULT" == "failure" ]]; then
+          echo "✅ Expected failure detected. Marking workflow as successful."
+          exit 0  # Mark workflow as successful
+        elif [[ "$SUCCEEDING_RESULT" == "success" && "$FAILING_RESULT" == "success" ]]; then
+          echo "❌ Unexpected success! The failing job should have failed."
+          exit 1  # Unexpected success should fail the workflow
+        else
+          echo "❌ Conditions NOT met. Marking workflow as failed."
+          exit 1  # Explicitly fail the workflow
+        fi
