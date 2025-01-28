@@ -25,6 +25,7 @@ jobs:
             }
 
   run-fast-failing-workflow:
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
