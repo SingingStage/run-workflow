@@ -42,13 +42,13 @@ jobs:
             {
               "uuid": "${{ github.sha }}-2"
             }
-
   validate-workflow-status:
     runs-on: ubuntu-latest
     needs:
-    if: always()  # Runs even if dependencies failed
       - run-slow-succeeding-workflow
       - run-fast-failing-workflow
+    if: always()  # Runs even if dependencies failed
+
     steps:
       - name: Check Workflow Status
         run: |
