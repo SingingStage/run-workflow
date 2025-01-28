@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  run-slow-succeeding workflow:
+  run-slow-succeeding-workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
