@@ -10,16 +10,41 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Run workflow using custom action
+
+      - name: Run Slow Succeeding Workflow
         uses: ./
         with:
           token: ${{ secrets.SINGING_STAGE_WORKFLOW_TOKEN }}
           repository: ${{ github.repository }}
-          workflow: dispatched-workflow.yml
+          workflow: dispatched-slow-succeeding-workflow.yml
           ref: main
-          
+
           inputs: |
             {
-              "uuid": "123"
+              "uuid": "1"
             }
+
+      - name: Run Fast Failing Workflow
+        continue-on-error: true
+        uses: ./
+        with:
+          token: ${{ secrets.SINGING_STAGE_WORKFLOW_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: dispatched-fast-failing-workflow.yml
+          ref: main
+
+          inputs: |
+            {
+              "uuid": "2"
+            }
+
+      - name: Check and Modify Fast Failing Workflow Status
+        run: |
+          if [ "$?" -eq 0 ]; then
+            echo "Fast Failing Workflow succeeded unexpectedly. Marking as failed."
+            exit 1
+          else
+            echo "Fast Failing Workflow failed as expected. Reversing to success."
+            exit 0
+          fi
+        shell: bash

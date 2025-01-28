@@ -1,0 +1,21 @@
+name: Dispatched Workflow
+on:
+  workflow_dispatch:
+    inputs:
+        uuid:
+          type: string
+          description: "UUID to identify workflow run"
+          required: true
+
+jobs:
+  test-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print outputs
+        uses: SingingStage/identify-workflow@v0.0.1
+
+      - name: Wait
+        run: sleep 20
+
+      - name: Succeed
+        run: exit 0
