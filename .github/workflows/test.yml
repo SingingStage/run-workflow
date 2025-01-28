@@ -23,7 +23,6 @@ jobs:
             {
               "uuid": "${{ github.sha }}-1"
             }
-
   run-fast-failing-workflow:
     continue-on-error: true
     runs-on: ubuntu-latest
