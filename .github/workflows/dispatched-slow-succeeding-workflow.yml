@@ -15,7 +15,7 @@ jobs:
         uses: SingingStage/identify-workflow@v0.0.1
 
       - name: Wait
-        run: sleep 20
+        run: sleep 10
 
       - name: Succeed
         run: exit 0
