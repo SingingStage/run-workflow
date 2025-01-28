@@ -60,11 +60,11 @@ jobs:
 
           if [[ "$SUCCEEDING_RESULT" == "success" && "$FAILING_RESULT" == "failure" ]]; then
             echo "✅ Expected failure detected. Marking workflow as successful."
-            exit 0  # Mark workflow as successful
+            echo "✅ Validation job follows the workflow status."; exit 0
           elif [[ "$SUCCEEDING_RESULT" == "success" && "$FAILING_RESULT" == "success" ]]; then
             echo "❌ Unexpected success! The failing job should have failed."
             exit 1  # Unexpected success should fail the workflow
           else
             echo "❌ Conditions NOT met. Marking workflow as failed."
-            exit 1  # Explicitly fail the workflow
+            echo "❌ Validation job follows the workflow failure."; exit 1
           fi
