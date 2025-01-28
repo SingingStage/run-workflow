@@ -46,6 +46,7 @@ jobs:
   validate-workflow-status:
     runs-on: ubuntu-latest
     needs:
+    if: always()  # Runs even if dependencies failed
       - run-slow-succeeding-workflow
       - run-fast-failing-workflow
     steps:
