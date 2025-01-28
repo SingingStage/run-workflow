@@ -7,23 +7,22 @@ async function checkLogsForParameters(logsUrl, inputs, interval, token) {
       method: 'GET',
       headers: {
         'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `Bearer ${token}`, // Include token for authentication
+        'Authorization': `Bearer ${token}`,
       },
     });
 
     if (!logsResponse.ok) {
       if (logsResponse.status === 404) {
         core.warning('Logs are not yet available. Retrying...');
-        await new Promise((resolve) => setTimeout(resolve, interval * 1000)); // Wait for the specified interval
+        await new Promise((resolve) => setTimeout(resolve, interval * 1000));
         return false;
       } else {
         throw new Error(`Failed to fetch logs: ${logsResponse.statusText}`);
       }
     }
 
-    const logsContent = await logsResponse.text(); // Fetch logs as text
+    const logsContent = await logsResponse.text();
 
-    // Check if logs contain the specified inputs
     for (const [key, value] of Object.entries(inputs)) {
       if (!logsContent.includes(`${key}: ${value}`)) {
         core.warning(`Input ${key}: ${value} not found in logs.`);
@@ -38,23 +37,21 @@ async function checkLogsForParameters(logsUrl, inputs, interval, token) {
   }
 }
 
-
 async function run() {
   try {
-    // Fetch inputs
     const token = core.getInput('token', { required: true });
     const repository = core.getInput('repository', { required: true });
     const workflow = core.getInput('workflow', { required: true });
     const ref = core.getInput('ref', { required: true });
     const inputs = core.getInput('inputs');
-    const startTime = parseInt(core.getInput('startTime') || '0', 10); // Wait before starting in seconds
-    const interval = parseInt(core.getInput('interval') || '5', 10); // Polling interval in seconds
-    const timeout = parseInt(core.getInput('timeout') || '300', 10); // Timeout in seconds
+    const expected = core.getInput('expected', { required: false });
+    const startTime = parseInt(core.getInput('startTime'), 10);
+    const interval = parseInt(core.getInput('interval'), 10);
+    const timeout = parseInt(core.getInput('timeout'), 10);
 
     const [owner, repo] = repository.split('/');
     const octokit = new Octokit({ auth: token });
 
-    // Trigger workflow
     core.info('Triggering workflow...');
     const payload = {
       ref,
@@ -71,13 +68,11 @@ async function run() {
 
     core.info(`Successfully triggered workflow ${workflow}`);
 
-    // Delay polling until `startTime` seconds have passed
     if (startTime > 0) {
       core.info(`Waiting ${startTime} seconds before starting polling...`);
       await new Promise((resolve) => setTimeout(resolve, startTime * 1000));
     }
 
-    // Poll for logs
     const endTime = Date.now() + timeout * 1000;
     while (Date.now() < endTime) {
       core.info('Checking workflow status...');
@@ -97,16 +92,15 @@ async function run() {
         core.info(`Workflow run status: ${status}, conclusion: ${conclusion}`);
 
         if (status === 'completed') {
-          if (conclusion === 'success') {
-            core.info('Workflow completed successfully.');
+          if (conclusion === expected) {
+            core.info(`Workflow completed as expected: ${expected}.`);
             return;
           } else {
-            core.setFailed(`Workflow completed with conclusion: ${conclusion}`);
+            core.setFailed(`Workflow completed with unexpected conclusion: ${conclusion} (expected: ${expected})`);
             return;
           }
         }
 
-        // Check logs for inputs
         if (logs_url) {
           const logsReady = await checkLogsForParameters(logs_url, payload.inputs, interval, token);
           if (logsReady) {
@@ -115,7 +109,6 @@ async function run() {
         }
       }
 
-      // Wait for the specified interval before polling again
       await new Promise((resolve) => setTimeout(resolve, interval * 1000));
     }
 

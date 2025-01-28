@@ -24,7 +24,6 @@ jobs:
               "uuid": "${{ github.sha }}-1"
             }
   run-fast-failing-workflow:
-    continue-on-error: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,18 +36,9 @@ jobs:
           repository: ${{ github.repository }}
           workflow: dispatched-fast-failing-workflow.yml
           ref: main
+          expected: 'failure'
 
           inputs: |
             {
               "uuid": "${{ github.sha }}-2"
             }
-
-      - name: Validate and Override Workflow Status
-        run: |
-          if [[ "$status" == "failure" ]]; then
-            echo "✅ Expected failure detected. Marking workflow as successful."
-            exit 0  # Overrides workflow failure
-          else
-            echo "❌ Unexpected failure. Keeping failure status."
-            exit 1
-          fi

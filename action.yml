@@ -17,6 +17,10 @@ inputs:
   inputs:
     description: 'Optional JSON string of inputs to pass to the workflow.'
     required: false
+  expected:
+    description: 'The expected conclusion of the dispatched workflow (success or failure).'
+    required: false
+    default: 'success'
   startTime:
     description: 'The number of seconds to wait before starting the polling.'
     required: false
