@@ -1,4 +1,4 @@
-name: Dispatched Workflow
+name: Slow Succeeding Dispatched Workflow
 on:
   workflow_dispatch:
     inputs:
