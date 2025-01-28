@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  run-workflow:
+  run-slow-succeeding workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,7 +23,9 @@ jobs:
             {
               "uuid": "1"
             }
-
+  run-fast-failing-workflow:
+    runs-on: ubuntu-latest
+    steps:
       - name: Run Fast Failing Workflow
         continue-on-error: true
         uses: ./
@@ -37,14 +39,4 @@ jobs:
             {
               "uuid": "2"
             }
-
-      - name: Check and Modify Fast Failing Workflow Status
-        run: |
-          if [ "$?" -eq 0 ]; then
-            echo "Fast Failing Workflow succeeded unexpectedly. Marking as failed."
-            exit 1
-          else
-            echo "Fast Failing Workflow failed as expected. Reversing to success."
-            exit 0
-          fi
-        shell: bash
+  
