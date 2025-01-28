@@ -24,7 +24,7 @@ jobs:
               "uuid": "${{ github.sha }}-1"
             }
   run-fast-failing-workflow:
-    continue-on-error: true
+    continue-on-error: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
