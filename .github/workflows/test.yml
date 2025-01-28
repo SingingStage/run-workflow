@@ -21,13 +21,15 @@ jobs:
 
           inputs: |
             {
-              "uuid": "1"
+              "uuid": "${{ github.sha }}-1"
             }
+
   run-fast-failing-workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Run Fast Failing Workflow
         continue-on-error: true
         uses: ./
@@ -39,6 +41,22 @@ jobs:
 
           inputs: |
             {
-              "uuid": "2"
+              "uuid": "${{ github.sha }}-2"
             }
-  
+
+  validate-workflow-status:
+    runs-on: ubuntu-latest
+    needs:
+      - run-slow-succeeding-workflow
+      - run-fast-failing-workflow
+    steps:
+      - name: Check Workflow Status
+        run: |
+          if [[ "${{ needs.run-slow-succeeding-workflow.result }}" == "success" && "${{ needs.run-fast-failing-workflow.result }}" == "failure" ]]; then
+            echo "Both conditions are met: succeeding workflow succeeded, failing workflow failed."
+            exit 0
+          else
+            echo "Conditions not met. Marking workflow as failed."
+            exit 1
+          fi
+        shell: bash
