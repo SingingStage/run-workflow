@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger remote workflow
-        uses: your-username/dispatch-workflow-action@v1
+        uses: universal-actions/dispatch-workflow-action@v1
         with:
           repo: "target-org/target-repo"
           workflow: "triggered-workflow.yml"
