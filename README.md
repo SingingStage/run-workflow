@@ -6,6 +6,7 @@ This GitHub Action triggers a workflow dispatch event in a target repository. It
 ## Features
 - Dispatches a workflow in another repository.
 - Supports custom inputs and secrets.
+- Polls the dispatched workflow's status and sets the action's status code accordingly.
 - Easily configurable via YAML.
 
 ## Usage
@@ -40,11 +41,5 @@ jobs:
 | `token`    | GitHub token with repo access. | ✅ |
 | `inputs`   | JSON object with workflow inputs. | ❌ |
 
-## Example Use Cases
-- Triggering deployment workflows from another repo.
-- Syncing jobs across repositories.
-- Automating CI/CD tasks based on conditions.
-
-## License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
+## Behavior
+This action includes a polling mechanism that monitors the status of the dispatched
