@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs
-        uses: SingingStage/identify-workflow@v0.0.1
+        uses: universal-actions/identify-workflow@v1
 
       - name: Wait
         run: sleep 1
